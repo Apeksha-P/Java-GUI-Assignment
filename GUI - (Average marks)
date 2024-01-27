@@ -1,6 +1,67 @@
-public class Main {
-    public static void main(String[] args) {
-        StudentOOP studentOOP = new StudentOOP();
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class StudentOOP extends JFrame{
+    private JLabel title;
+    private JPanel marks;
+    private JLabel id;
+    private JLabel name;
+    private JLabel th;
+    private JLabel pr;
+    private JLabel ca;
+    private JTextField tid;
+    private JTextField tname;
+    private JTextField tth;
+    private JTextField tpr;
+    private JTextField tca;
+    private JButton view;
+    private JButton save;
+
+    public StudentOOP(){
+        setContentPane(marks);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(400,500);
+        setVisible(true);
+        setLocation(200,200);
+
+        view.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new View();
+            }
+        });
+        save.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/oop","root","1234");
+                    String sql = "INSERT INTO student(Id,name,th,pr,ca) VALUES (?,?,?,?,?)";
+                    PreparedStatement pr = connection.prepareCall(sql);
+                    pr.setString(1,tid.getText());
+                    pr.setString(2,tname.getText());
+                    pr.setInt(3,Integer.parseInt(tth.getText()));
+                    pr.setInt(4,Integer.parseInt(tpr.getText()));
+                    pr.setInt(5,Integer.parseInt(tca.getText()));
+                    pr.executeUpdate();
+                    pr.close();
+                    connection.close();
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                tid.setText("");tname.setText("");tth.setText("");tpr.setText("");tca.setText("");
+            }
+        });
     }
+
 }
 
